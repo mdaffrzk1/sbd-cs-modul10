@@ -1,0 +1,212 @@
+{
+  "info": {
+    "name": "SBD Store API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Auth & Users",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"username\": \"johndoe\",\n  \"email\": \"johndoe@example.com\",\n  \"phone\": \"+1-555-0100\",\n  \"password\": \"SecurePass123!\"\n}"
+            },
+            "url": "http://localhost:3000/user/register"
+          }
+        },
+        {
+          "name": "Login (No JWT Return)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"johndoe@example.com\",\n  \"password\": \"SecurePass123!\"\n}"
+            },
+            "url": "http://localhost:3000/user/login"
+          }
+        },
+        {
+          "name": "Login to get Token JWT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.success) {",
+                  "    pm.collectionVariables.set(\"token\", jsonData.payload.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"johndoe@example.com\",\n  \"password\": \"SecurePass123!\"\n}"
+            },
+            "url": "http://localhost:3000/auth/login"
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 4,\n  \"name\": \"John Doe Updated\",\n  \"balance\": 1000000000\n}"
+            },
+            "url": "http://localhost:3000/user/update"
+          }
+        },
+        {
+          "name": "User Transaction History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "http://localhost:3000/user/history?user_id=1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["user", "history"],
+              "query": [
+                { "key": "user_id", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "User Total Spent",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "http://localhost:3000/user/total-spent?user_id=1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["user", "total-spent"],
+              "query": [
+                { "key": "user_id", "value": "1" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Items",
+      "item": [
+        {
+          "name": "Get All Items",
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3000/items"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Transactions",
+      "item": [
+        {
+          "name": "Create Transaction",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.success) {",
+                  "    pm.collectionVariables.set(\"transactionId\", jsonData.payload.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": 1,\n  \"item_id\": 2,\n  \"quantity\": 3,\n  \"description\": \"Tes beli\"\n}"
+            },
+            "url": "http://localhost:3000/transaction/create"
+          }
+        },
+        {
+          "name": "Get Transaction by ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "http://localhost:3000/transaction/{{transactionId}}"
+          }
+        },
+        {
+          "name": "Pay Transaction",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "http://localhost:3000/transaction/pay/{{transactionId}}"
+          }
+        },
+        {
+          "name": "Delete Transaction",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "http://localhost:3000/transaction/{{transactionId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Reports",
+      "item": [
+        {
+          "name": "Top Users (RANK)",
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3000/reports/top-users?limit=10"
+          }
+        },
+        {
+          "name": "Items Sold (JOIN & SUM)",
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3000/reports/items-sold"
+          }
+        },
+        {
+          "name": "Monthly Sales (date_trunc)",
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3000/reports/monthly-sales?year=2026"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "token", "value": "", "type": "string" },
+    { "key": "transactionId", "value": "1", "type": "string" }
+  ]
+}

@@ -18,7 +18,7 @@ app.use(helmet());
 
 // Konfigurasi CORS sesuai instruksi
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:3001'],
+  origin: ['http://localhost:3000', 'http://localhost:3001', 'https://sbd-cs-modul10.vercel.app'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));

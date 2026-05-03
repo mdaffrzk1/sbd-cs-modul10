@@ -13,14 +13,24 @@ const reportRoutes = require('./routes/reportRoutes');
 
 const app = express();
 
-// Tambahkan Helmet untuk keamanan HTTP headers semua route
-app.use(helmet());
-
 // Konfigurasi CORS sesuai instruksi
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:3001', 'https://sbd-cs-modul10.vercel.app'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'https://sbd-cs-modul10.vercel.app'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
+}));
+
+// Tangani preflight requests
+app.options('*', cors());
+
+// Tambahkan Helmet untuk keamanan HTTP headers semua route
+app.use(helmet({
+  crossOriginResourcePolicy: false,
 }));
 
 // Body parsing

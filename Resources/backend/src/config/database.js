@@ -17,13 +17,13 @@ const poolConfig = process.env.DATABASE_URL
 
 const pool = new Pool(poolConfig);
 
-pool.on('connect', () => {
-  console.log('Connected to PostgreSQL database');
+// Debugging di Vercel Logs
+pool.on('error', (err) => {
+  console.error('DATABASE_ERROR:', err.message);
 });
 
-pool.on('error', (err) => {
-  console.error('Unexpected error on idle client', err);
-  process.exit(-1);
+pool.on('connect', () => {
+  console.log('Connected to PostgreSQL database');
 });
 
 module.exports = {
